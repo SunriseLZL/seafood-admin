@@ -5,6 +5,7 @@ import {getToken} from '@/utils/kit.js';
 axios.defaults.timeout = 15000;
 axios.defaults.retry = 3;
 axios.defaults.retryDelay = 2000;
+axios.defaults.baseURL = '/api/';
 
 function axiosRetryInterceptor(err) {
     let config = err.config;

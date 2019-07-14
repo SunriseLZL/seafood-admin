@@ -11,10 +11,14 @@ module.exports = {
     publicPath: publicPath, // 和 baseUrl 保持一致
     proxy: {
       // 测试环境
-      "/": {
+      "/api": {
         ws: false,
         target: "http://hbzkzpp.cn/",
-        changeOrigin: true
+        changeOrigin: true,
+        secure: false,
+        pathRewrite: {
+          '^/api': ''//直接转发到zuul网关，请本地开发环境将pathRewrite注释掉
+        }
       }
     }
   },
