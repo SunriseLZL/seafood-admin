@@ -5,7 +5,6 @@ import {getToken} from '@/utils/kit.js';
 axios.defaults.timeout = 15000;
 axios.defaults.retry = 3;
 axios.defaults.retryDelay = 2000;
-axios.defaults.baseURL = '/api/';
 
 function axiosRetryInterceptor(err) {
     let config = err.config;
@@ -42,7 +41,7 @@ axios.interceptors.request.use(
     config => {
         // development
         if (process.env.NODE_ENV === 'production') {
-            config.url = '/WXB' + config.url;
+            config.url = '/api' + config.url;
             // 地图数据不需要加/WXB前缀
             /* if (config.url.indexOf('map/json/province') > -1) {
               config.url = config.url.substr(4)

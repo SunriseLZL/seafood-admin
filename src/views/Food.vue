@@ -32,11 +32,11 @@
                     </el-table-column>
                     <el-table-column
                             prop="retailPrice"
-                            label="零售价（元）">
+                            label="批发价（元）">
                     </el-table-column>
                     <el-table-column
                             prop="wholesalePrice"
-                            label="批发价（元）">
+                            label="零售价（元）">
                     </el-table-column>
                     <el-table-column
                             prop="createTime"
