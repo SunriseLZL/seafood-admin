@@ -2,6 +2,7 @@
     <div class="container">
         <el-card class="box-card">
             <el-button type="primary" @click="addGoods">新增商品</el-button>
+            <el-button type="success" @click="getGoodsList">刷新列表</el-button>
             <el-row style="text-align: right">
                 <el-pagination
                         background
@@ -13,6 +14,7 @@
             <el-row>
                 <el-table
                         :data="tableData"
+                        v-loading="loading"
                         style="width: 100%;margin-top:20px">
                     <el-table-column
                             prop="title"
@@ -31,20 +33,26 @@
                             label="产地">
                     </el-table-column>
                     <el-table-column
-                            prop="retailPrice"
+                            prop="wholesalePrice"
                             label="批发价（元）">
                     </el-table-column>
                     <el-table-column
-                            prop="wholesalePrice"
+                            prop="retailPrice"
                             label="零售价（元）">
                     </el-table-column>
                     <el-table-column
                             prop="createTime"
                             label="创建时间">
+                        <template slot-scope="scope">
+                            <p>{{formatDate(scope.row.createTime)}}</p>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             prop="updateTime"
                             label="更新时间">
+                        <template slot-scope="scope">
+                            <p>{{formatDate(scope.row.updateTime)}}</p>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             label="操作">
@@ -71,11 +79,11 @@
                 <el-form-item label="库存：" prop="num">
                     <el-input v-model="ruleForm.num" style="width: 300px"></el-input>
                 </el-form-item>
-                <el-form-item label="批发价：" prop="retailPrice">
-                    <el-input v-model="ruleForm.retailPrice" style="width: 300px"></el-input>
-                </el-form-item>
-                <el-form-item label="零售价：" prop="wholesalePrice">
+                <el-form-item label="批发价：" prop="wholesalePrice">
                     <el-input v-model="ruleForm.wholesalePrice" style="width: 300px"></el-input>
+                </el-form-item>
+                <el-form-item label="零售价：" prop="retailPrice">
+                    <el-input v-model="ruleForm.retailPrice" style="width: 300px"></el-input>
                 </el-form-item>
                 <el-form-item label="产地：" prop="address">
                     <el-input v-model="ruleForm.address" style="width: 300px"></el-input>
@@ -122,6 +130,7 @@
                 rules: {},
                 dialogImageUrl: '',
                 dialogVisible: false,
+                loading: false,
                 preview: false,
                 total: 0,
                 tableData: []
@@ -175,14 +184,19 @@
                     });
                 });
             },
+            formatDate(date) {
+                return moment(date).format(`YYYY-MM-DD HH:mm:ss`)
+            },
             async getGoodsList() {
+                this.loading = true;
                 const res = await goodsList({
                     ...this.form
                 });
                 if (!!res) {
                     this.tableData = res.data.list;
-                    this.total = res.data.count
+                    this.total = res.data.count;
                 }
+                this.loading = false
             },
             handleCurrentChange(val) {
                 this.form.current = val;
@@ -194,7 +208,7 @@
                 });
                 console.log(res)
                 if (!!res) {
-                    this.$message.success('添加成功');
+                    this.$message.success('操作成功');
                     this.dialogVisible = false;
                     this.getGoodsList();
                 }

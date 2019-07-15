@@ -8,7 +8,8 @@
                         <el-input v-model="ruleForm.name" @keyup.enter.native="handleLogin"></el-input>
                     </el-form-item>
                     <el-form-item label="密码" prop="password">
-                        <el-input type="password" @keyup.enter.native="handleLogin" v-model="ruleForm.password"></el-input>
+                        <el-input type="password" @keyup.enter.native="handleLogin"
+                                  v-model="ruleForm.password"></el-input>
                     </el-form-item>
                 </el-form>
                 <div class="login-bottom">
@@ -44,7 +45,7 @@
     methods: {
       async handleLogin() {
         const res = await login({...this.ruleForm});
-        if (!!res) {
+        if (!!res && res.code === 200) {
           console.log(res);
           setToken(res.data);
           localStorage.setItem('name', this.ruleForm.name);

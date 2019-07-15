@@ -1,17 +1,23 @@
 <template>
     <div class="container">
         <el-card class="box-card">
-            <el-row style="text-align: right">
-                <el-pagination
-                        background
-                        layout="prev, pager, next"
-                        @current-change="handleCurrentChange"
-                        :total="total">
-                </el-pagination>
+            <el-row>
+                <el-col :span="4">
+                    <el-button type="primary" @click="getOrderList">刷新</el-button>
+                </el-col>
+                <el-col :span="20" style="text-align: right">
+                    <el-pagination
+                            background
+                            layout="prev, pager, next"
+                            @current-change="handleCurrentChange"
+                            :total="total">
+                    </el-pagination>
+                </el-col>
             </el-row>
             <el-row>
                 <el-table
                         :data="tableData"
+                        v-loading="loading"
                         style="width: 100%;margin-top:20px">
                     <el-table-column
                             prop="orderCode"
@@ -31,19 +37,26 @@
                             prop="statusDesc"
                             label="订单状态">
                         <template slot-scope="scope">
-                            <span :class="{'red':scope.row.statusDesc === '未付款'}">{{scope.row.statusDesc}}</span>
+                            <span :class="{'red':scope.row.statusDesc === '未付款','green':scope.row.statusDesc === '已付款'}">{{scope.row.statusDesc}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
-                            width="500"
+                            width="300"
                             label="收货地址">
                         <template slot-scope="scope">
                             <span>{{scope.row.addressArea+scope.row.addressDetail}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column
+                            prop="orderNote"
+                            label="备注">
+                    </el-table-column>
+                    <el-table-column
                             prop="createTime"
                             label="创建时间">
+                        <template slot-scope="scope">
+                            <p>{{formatDate(scope.row.createTime)}}</p>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             label="操作">
@@ -107,6 +120,8 @@
                 },
                 rules: {},
                 detailView: false,
+                timer: null,
+                loading: false,
                 total: 0,
                 tableData: [],
                 viewData: []
@@ -114,16 +129,20 @@
         },
         methods: {
             async getOrderList() {
+                this.loading = true;
                 const res = await orderList({
                     ...this.form
                 });
                 if (!!res) {
                     this.tableData = res.data.list;
-                    this.total = res.data.count
+                    this.total = res.data.count;
                 }
+                this.loading = false;
+            },
+            formatDate(date) {
+                return moment(date).format(`YYYY-MM-DD HH:mm:ss`)
             },
             view(params) {
-                console.log(params)
                 this.viewData = params;
                 this.detailView = true
             },
@@ -134,6 +153,21 @@
         },
         mounted() {
             this.getOrderList();
+            this.timer = setInterval(() => {
+                this.getOrderList();
+            }, 10000)
+        },
+
+        destroy() {
+            if (this.timer) {
+                clearInterval(this.timer);
+            }
+        },
+
+        beforeDestroy() {
+            if (this.timer) {
+                clearInterval(this.timer);
+            }
         }
     };
 </script>
@@ -145,5 +179,11 @@
 
     .red {
         color: red;
+        font-weight: bold;
+    }
+
+    .green {
+        color: green;
+        font-weight: bold;
     }
 </style>

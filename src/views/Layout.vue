@@ -8,6 +8,7 @@
                     background-color="#051423"
                     text-color="#CCC"
                     :router="true"
+                    :default-active="currentPath"
                     active-text-color="#fff">
                 <el-menu-item index="/order">
                     <i class="el-icon-eleme"></i>
@@ -28,9 +29,16 @@
 </template>
 
 <script>
-  export default {
-    name: "Layout",
-  };
+    export default {
+        name: "Layout",
+        computed: {
+            currentPath() {
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+                return this.$route.path;
+            }
+        }
+    };
 </script>
 
 <style lang="scss" scoped>
@@ -54,14 +62,17 @@
 
     .el-menu-vertical {
         height: 100%;
+
         /deep/ .el-submenu__title:hover {
             background: rgba(35, 135, 230, 0.1) !important;
             color: #2387E6 !important;
         }
+
         /deep/ .el-menu-item:hover {
             background: #2387E6 !important;
             color: #ffffff !important;
         }
+
         /deep/ .el-menu-item.is-active {
             background: #2387E6 !important;
             color: #ffffff !important;
@@ -93,10 +104,12 @@
             background: rgba(35, 135, 230, 0.1) !important;
             color: #2387E6 !important;
         }
+
         /deep/ .el-menu-item:hover {
             background: #2387E6 !important;
             color: #ffffff !important;
         }
+
         /deep/ .el-menu-item.is-active {
             background: #2387E6 !important;
             color: #ffffff !important;
