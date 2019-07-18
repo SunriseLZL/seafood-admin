@@ -35,6 +35,9 @@
                     <el-table-column
                             prop="unit"
                             label="计量单位">
+                        <template slot-scope="scope">
+                            <p>{{unitDict[scope.row.unit]}}</p>
+                        </template>
                     </el-table-column>
                     <el-table-column
                             prop="wholesalePrice"
@@ -146,7 +149,13 @@
         loading: false,
         preview: false,
         total: 0,
-        tableData: []
+        tableData: [],
+        unitDict:{
+          '1':'斤',
+          '2':'袋',
+          '3':'只',
+          '4':'桶',
+        }
       };
     },
     methods: {
