@@ -31,7 +31,7 @@ export default new Router({
         }, {
           path: "/store",
           name: "store",
-          component: () => import("./views/Food.vue"),
+          component: () => import("./views/Goods.vue"),
         }, {
           path: "/user",
           name: "user",

@@ -33,6 +33,10 @@
                             label="产地">
                     </el-table-column>
                     <el-table-column
+                            prop="unit"
+                            label="计量单位">
+                    </el-table-column>
+                    <el-table-column
                             prop="wholesalePrice"
                             label="批发价（元）">
                     </el-table-column>
@@ -79,6 +83,14 @@
                 <el-form-item label="库存：" prop="num">
                     <el-input v-model="ruleForm.num" style="width: 300px"></el-input>
                 </el-form-item>
+                <el-form-item label="单位：" prop="unit">
+                    <el-select v-model="ruleForm.unit" placeholder="请选择" style="width: 300px">
+                        <el-option label="斤" value="1"></el-option>
+                        <el-option label="袋" value="2"></el-option>
+                        <el-option label="只" value="3"></el-option>
+                        <el-option label="桶" value="4"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="批发价：" prop="wholesalePrice">
                     <el-input v-model="ruleForm.wholesalePrice" style="width: 300px"></el-input>
                 </el-form-item>
@@ -108,117 +120,119 @@
 </template>
 
 <script>
-    import {goodsList, goodsEdit, goodsDel} from '@/api/source.js';
+  import {goodsList, goodsEdit, goodsDel} from '@/api/source.js';
 
-    export default {
-        name: 'Food',
-        data() {
-            return {
-                form: {
-                    current: 1,
-                    size: 5
-                },
-                ruleForm: {
-                    id: null,
-                    title: '',
-                    photo: '',
-                    num: 0,
-                    wholesalePrice: 0,
-                    retailPrice: 0,
-                    inBanner: false,
-                },
-                rules: {},
-                dialogImageUrl: '',
-                dialogVisible: false,
-                loading: false,
-                preview: false,
-                total: 0,
-                tableData: []
-            };
+  export default {
+    name: 'Food',
+    data() {
+      return {
+        form: {
+          current: 1,
+          size: 5
         },
-        methods: {
-            addGoods() {
-                this.dialogVisible = true;
-                this.ruleForm = {
-                    id: null,
-                    title: '',
-                    photo: '',
-                    num: 0,
-                    wholesalePrice: 0,
-                    retailPrice: 0,
-                    inBanner: false,
-                }
-            },
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
-            },
-            handlePictureCardPreview(url) {
-                this.dialogImageUrl = url;
-                this.preview = true;
-            },
-            handleEdit(params) {
-                console.log(params);
-                this.ruleForm = {...params};
-                this.dialogVisible = true
-            },
-            async handleDel(id) {
-                this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(async () => {
-                    const res = await goodsDel({
-                        id
-                    });
-                    if (!!res) {
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                        this.getGoodsList();
-                    }
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消删除'
-                    });
-                });
-            },
-            formatDate(date) {
-                return moment(date).format(`YYYY-MM-DD HH:mm:ss`)
-            },
-            async getGoodsList() {
-                this.loading = true;
-                const res = await goodsList({
-                    ...this.form
-                });
-                if (!!res) {
-                    this.tableData = res.data.list;
-                    this.total = res.data.count;
-                }
-                this.loading = false
-            },
-            handleCurrentChange(val) {
-                this.form.current = val;
-                this.getGoodsList()
-            },
-            async handleSubmit() {
-                const res = await goodsEdit({
-                    ...this.ruleForm
-                });
-                console.log(res)
-                if (!!res) {
-                    this.$message.success('操作成功');
-                    this.dialogVisible = false;
-                    this.getGoodsList();
-                }
-
-            }
+        ruleForm: {
+          id: null,
+          title: '',
+          photo: '',
+          num: 0,
+          unit: '1',
+          wholesalePrice: 0,
+          retailPrice: 0,
+          inBanner: false,
         },
-        mounted() {
+        rules: {},
+        dialogImageUrl: '',
+        dialogVisible: false,
+        loading: false,
+        preview: false,
+        total: 0,
+        tableData: []
+      };
+    },
+    methods: {
+      addGoods() {
+        this.dialogVisible = true;
+        this.ruleForm = {
+          id: null,
+          title: '',
+          photo: '',
+          num: 0,
+          unit: '1',
+          wholesalePrice: 0,
+          retailPrice: 0,
+          inBanner: false,
+        };
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(url) {
+        this.dialogImageUrl = url;
+        this.preview = true;
+      },
+      handleEdit(params) {
+        console.log(params);
+        this.ruleForm = {...params};
+        this.dialogVisible = true;
+      },
+      async handleDel(id) {
+        this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          const res = await goodsDel({
+            id
+          });
+          if (!!res) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
             this.getGoodsList();
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+      formatDate(date) {
+        return moment(date).format(`YYYY-MM-DD HH:mm:ss`);
+      },
+      async getGoodsList() {
+        this.loading = true;
+        const res = await goodsList({
+          ...this.form
+        });
+        if (!!res) {
+          this.tableData = res.data.list;
+          this.total = res.data.count;
         }
-    };
+        this.loading = false;
+      },
+      handleCurrentChange(val) {
+        this.form.current = val;
+        this.getGoodsList();
+      },
+      async handleSubmit() {
+        const res = await goodsEdit({
+          ...this.ruleForm
+        });
+        console.log(res);
+        if (!!res) {
+          this.$message.success('操作成功');
+          this.dialogVisible = false;
+          this.getGoodsList();
+        }
+
+      }
+    },
+    mounted() {
+      this.getGoodsList();
+    }
+  };
 </script>
 
 <style lang="scss" scoped>
