@@ -8,7 +8,8 @@
                 <el-col :span="20" style="text-align: right">
                     <el-pagination
                             background
-                            layout="prev, pager, next"
+                            layout="total,sizes,prev, pager, next"
+                            @size-change="handleSizeChange"
                             @current-change="handleCurrentChange"
                             :total="total">
                     </el-pagination>
@@ -149,7 +150,12 @@
             handleCurrentChange(val) {
                 this.form.current = val;
                 this.getOrderList()
-            }
+            },
+            handleSizeChange(val) {
+                this.form.current = 1;
+                this.form.size = val;
+                this.getGoodsList();
+            },
         },
         mounted() {
             this.getOrderList();
